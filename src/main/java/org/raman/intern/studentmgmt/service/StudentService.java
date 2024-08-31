@@ -1,13 +1,15 @@
 package org.raman.intern.studentmgmt.service;
+
 import org.raman.intern.studentmgmt.entity.Student;
 import org.raman.intern.studentmgmt.repository.StudentRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
-
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
@@ -16,15 +18,15 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public Student getStudent(Long id) {
-        return studentRepository.findById(id).orElse(null);
+    public Optional<Student> getStudent(String id) {
+        return studentRepository.findById(id);
     }
 
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    public Optional<Student> updateStudent(Long id, Student updatedStudent) {
+    public Optional<Student> updateStudent(String id, Student updatedStudent) {
         return studentRepository.findById(id)
                 .map(student -> {
                     student.setName(updatedStudent.getName());
@@ -36,7 +38,7 @@ public class StudentService {
                 });
     }
 
-    public boolean deleteStudent(Long id) {
+    public boolean deleteStudent(String id) {
         if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;

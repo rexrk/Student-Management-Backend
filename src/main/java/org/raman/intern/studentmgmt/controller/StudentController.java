@@ -33,31 +33,29 @@ public class StudentController {
                 .path("/{id}")
                 .buildAndExpand(createdStudent.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(createdStudent);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
-        Student student = studentService.getStudent(id);
-        if (student == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(student, HttpStatus.OK);
+    public ResponseEntity<Student> getStudentInfo(@PathVariable String id) {
+        Optional<Student> student = studentService.getStudent(id);
+        return student
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable String id) {
         boolean isDeleted = studentService.deleteStudent(id);
         if (isDeleted) return ResponseEntity.noContent().build();
 
         return ResponseEntity.notFound().build();
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody @Valid Student updatedStudent) {
+    public ResponseEntity<Student> updateStudent(@PathVariable String id, @RequestBody @Valid Student updatedStudent) {
         Optional<Student> result = studentService.updateStudent(id, updatedStudent);
-
         return result
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
