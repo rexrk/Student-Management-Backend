@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-react-app
+  labels:
+    app: student-react-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-react-app
+  template:
+    metadata:
+      labels:
+        app: student-react-app
+    spec:
+      containers:
+        - name: student-react-app
+          image: devraman/student-mgmt-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-react-app
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80 #change to run on port 80 in production usage
+      targetPort: 3000
+  selector:
+    app: student-react-app
