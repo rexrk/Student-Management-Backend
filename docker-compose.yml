@@ -17,7 +17,7 @@ services:
       - mongodb
 
   frontend:
-    image: devraman/student-mgmt-frontend:latest
+    image: devraman/student-mgmt-frontend:v1
     ports:
       - "3000:3000"
     depends_on:

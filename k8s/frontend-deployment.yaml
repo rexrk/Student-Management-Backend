@@ -4,6 +4,7 @@ metadata:
   name: student-react-app
   labels:
     app: student-react-app
+  namespace: student-namespace
 spec:
   replicas: 1
   selector:
@@ -16,21 +17,20 @@ spec:
     spec:
       containers:
         - name: student-react-app
-          image: devraman/student-mgmt-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: devraman/student-mgmt-frontend:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
-              protocol: TCP
-      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: student-react-app
+  namespace: student-namespace
 spec:
   type: LoadBalancer
   ports:
-    - port: 80 #change to run on port 80 in production usage
+    - port: 80
       targetPort: 3000
   selector:
     app: student-react-app

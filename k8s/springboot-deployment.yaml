@@ -4,6 +4,7 @@ metadata:
   name: student-springboot-app
   labels:
     app: student-springboot-app
+  namespace: student-namespace
 spec:
   replicas: 1
   selector:
@@ -17,20 +18,21 @@ spec:
       containers:
         - name: student-springboot-app
           image: devraman/student-mgmt:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: MONGODB_URI
               value: mongodb://mongodb:27017/students
           ports:
             - containerPort: 8080
-              protocol: TCP
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-app
+  name: student-springboot-app
+  namespace: student-namespace
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
