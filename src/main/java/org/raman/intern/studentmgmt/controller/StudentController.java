@@ -1,5 +1,4 @@
 package org.raman.intern.studentmgmt.controller;
-
 import jakarta.validation.Valid;
 import org.raman.intern.studentmgmt.entity.Student;
 import org.raman.intern.studentmgmt.service.StudentService;
@@ -22,13 +21,7 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> allStudents = studentService.getAllStudents();
-        return new ResponseEntity<>(allStudents, HttpStatus.OK);
-    }
-
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<Student> createStudent(@RequestBody @Valid Student student) {
         Student createdStudent = studentService.addStudent(student);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()

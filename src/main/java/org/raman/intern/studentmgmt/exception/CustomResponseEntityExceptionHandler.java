@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -23,5 +24,15 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
                 LocalDateTime.now());
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ErrorDetails> handleEntityExistsException(EntityExistsException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                LocalDateTime.now());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 }

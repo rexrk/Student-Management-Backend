@@ -18,18 +18,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -62,30 +59,30 @@ public class JwtSecurityConfig {
                 .build();
     }
 
-    @Bean
+    @Bean //change parameter UserDetailsService -> StudentService
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService) {
+            UserDetailsService userDetailsService) throws UsernameNotFoundException {
         var authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         return new ProviderManager(authenticationProvider);
     }
 
-    //In memory users ....
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("raman")
-                .password("{noop}raman")
-                .authorities("read")
-                .roles("USER")
-                .build();
-        UserDetails admin = User.withUsername("admin")
-                .password("{noop}admin")
-                .authorities("read", "write")
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
+    //In memory users .... {extended}
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user = User.withUsername("raman")
+//                .password("{noop}raman")
+//                .authorities("read")
+//                .roles("USER")
+//                .build();
+//        UserDetails admin = User.withUsername("admin")
+//                .password("{noop}admin")
+//                .authorities("read", "write")
+//                .roles("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user, admin);
+//    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -108,9 +105,7 @@ public class JwtSecurityConfig {
 
     @Bean
     public RSAKey rsaKey() {
-
         KeyPair keyPair = keyPair();
-
         return new RSAKey
                 .Builder((RSAPublicKey) keyPair.getPublic())
                 .privateKey((RSAPrivateKey) keyPair.getPrivate())
@@ -129,6 +124,5 @@ public class JwtSecurityConfig {
                     "Unable to generate an RSA Key Pair", e);
         }
     }
-
 }
 
