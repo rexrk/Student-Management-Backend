@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,10 +30,11 @@ public class StudentService implements UserDetailsService {
             throw new UsernameNotFoundException("No student found with username: " + username);
         }
 
+        String role = "ROLE_" + student.get().getRole().name();
         return new User(
                 student.get().getUsername(),
                 student.get().getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + student.get().getRole().name()))
+                List.of(new SimpleGrantedAuthority(role))
         );
     }
 
@@ -46,12 +46,12 @@ public class StudentService implements UserDetailsService {
         return studentRepository.save(student);
     }
 
-    public Optional<Student> getStudent(String id) {
-        return studentRepository.findById(id);
+    public Optional<Student> getStudent(String username, String id) {
+        return studentRepository.findByUsernameAndId(username, id);
     }
 
-    public Optional<Student> updateStudent(String id, Student updatedStudent) {
-        return studentRepository.findById(id)
+    public Optional<Student> updateStudent(String username, String id, Student updatedStudent) {
+        return studentRepository.findByUsernameAndId(username, id)
                 .map(student -> {
                     student.setName(updatedStudent.getName());
                     student.setContactDetails(updatedStudent.getContactDetails());
@@ -62,12 +62,11 @@ public class StudentService implements UserDetailsService {
                 });
     }
 
-    public boolean deleteStudent(String id) {
+    public boolean deleteStudent(String username, String id) {
         if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;
         }
         return false;
-
     }
 }

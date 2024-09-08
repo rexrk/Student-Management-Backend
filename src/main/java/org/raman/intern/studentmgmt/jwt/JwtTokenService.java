@@ -25,7 +25,7 @@ public class JwtTokenService {
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.toList());
 
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -40,4 +40,3 @@ public class JwtTokenService {
                 .getTokenValue();
     }
 }
-

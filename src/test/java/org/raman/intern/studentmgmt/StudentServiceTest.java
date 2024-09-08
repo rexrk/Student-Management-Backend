@@ -10,6 +10,8 @@ import org.raman.intern.studentmgmt.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
@@ -21,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+//@SpringBootTest
 public class StudentServiceTest {
     @Mock
     private StudentRepository studentRepository;
@@ -54,7 +56,7 @@ public class StudentServiceTest {
     void getStudentTest() {
         when(studentRepository.findById("hash2")).thenReturn(Optional.of(student2));
 
-        Optional<Student> result = studentService.getStudent("hash2");
+        Optional<Student> result = studentService.getStudent("sushi","hash2");
         assertTrue(result.isPresent());
         assertEquals(student2, result.get());
     }
@@ -65,7 +67,7 @@ public class StudentServiceTest {
         when(studentRepository.findById("hash1")).thenReturn(Optional.of(student1));
         when(studentRepository.save(student1)).thenReturn(updatedStudent);
 
-        Optional<Student> result = studentService.updateStudent("hash1", updatedStudent);
+        Optional<Student> result = studentService.updateStudent("test1","hash1", updatedStudent);
 
         assertTrue(result.isPresent());
         assertEquals(updatedStudent.getName(), result.get().getName());
@@ -76,14 +78,14 @@ public class StudentServiceTest {
     @Test
     void deleteStudentTest() {
         when(studentRepository.existsById("hash1")).thenReturn(true);
-        boolean result = studentService.deleteStudent("hash1");
+        boolean result = studentService.deleteStudent("test1","hash1");
         assertTrue(result);
     }
 
     @Test
     void deleteStudentNotFound() {
         when(studentRepository.existsById("hash1")).thenReturn(false);
-        boolean result = studentService.deleteStudent("hash1");
+        boolean result = studentService.deleteStudent("test1", "hash1");
         assertFalse(result);
     }
 }
