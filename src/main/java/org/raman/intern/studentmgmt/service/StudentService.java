@@ -8,8 +8,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -35,14 +36,17 @@ public class StudentService implements UserDetailsService {
         );
     }
 
-
     public Student addStudent(Student student) {
         if(studentRepository.findByUsername(student.getUsername()).isPresent()) {
             throw new EntityExistsException("Student already present");
         }
+        student.setPassword(passwordEncoder().encode(student.getPassword()));
         return studentRepository.save(student);
     }
 
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     public Optional<Student> getStudent(String id) {
         return studentRepository.findById(id);
     }
