@@ -1,5 +1,6 @@
 package org.raman.intern.studentmgmt.exception;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
