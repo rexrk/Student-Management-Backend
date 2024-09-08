@@ -17,9 +17,11 @@ import java.util.Optional;
 @Service
 public class StudentService implements UserDetailsService {
     private final StudentRepository studentRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class StudentService implements UserDetailsService {
         return new User(
                 student.get().getUsername(),
                 student.get().getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + student.get().getRole().name().toString()))
+                List.of(new SimpleGrantedAuthority("ROLE_" + student.get().getRole().name()))
         );
     }
 
@@ -40,13 +42,10 @@ public class StudentService implements UserDetailsService {
         if(studentRepository.findByUsername(student.getUsername()).isPresent()) {
             throw new EntityExistsException("Student already present");
         }
-        student.setPassword(passwordEncoder().encode(student.getPassword()));
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
         return studentRepository.save(student);
     }
 
-    private PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
     public Optional<Student> getStudent(String id) {
         return studentRepository.findById(id);
     }

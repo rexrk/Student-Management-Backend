@@ -25,10 +25,14 @@ public class StudentController {
     public ResponseEntity<Student> createStudent(@RequestBody @Valid Student student) {
         Student createdStudent = studentService.addStudent(student);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .replacePath("/students/{id}")
                 .buildAndExpand(createdStudent.getId())
                 .toUri();
         return ResponseEntity.created(location).body(createdStudent);
+    }
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
     }
 
     @GetMapping("/{id}")
@@ -38,7 +42,6 @@ public class StudentController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable String id) {
