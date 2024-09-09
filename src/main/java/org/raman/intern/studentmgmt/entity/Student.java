@@ -28,4 +28,12 @@ public class Student {
     @Digits(integer = 6, fraction = 0, message = "pin code must be 6 digits")
     private Integer pinCode;
 
+    @NotEmpty(message = "username is required")
+    private String username;
+
+    @NotEmpty(message = "password is required")
+    private String password;
+
+    @NotNull(message = "role is null")
+    private Roles role;
 }
